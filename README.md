@@ -1,0 +1,2 @@
+# Rekkie
+Event recommendation app
