@@ -1,0 +1,153 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id              String                @id @default(cuid())
+  email           String                @unique
+  age             Int?
+  homeCity        String?
+  lat             Float?
+  lng             Float?
+  onboardingComplete Boolean            @default(false)
+  createdAt       DateTime              @default(now())
+  profile         UserProfile?
+  preferences     UserPreference[]
+  favorites       FavoriteEntity[]
+  notifications   NotificationSetting?
+  accounts        Account[]
+  sessions        Session[]
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model UserProfile {
+  userId         String @id
+  bio            String?
+  discoveryLevel Int    @default(5) // 1-10 novelty appetite
+  budgetMin      Int?
+  budgetMax      Int?
+  user           User   @relation(fields: [userId], references: [id])
+}
+
+model UserPreference {
+  id        String   @id @default(cuid())
+  userId    String
+  kind      String // 'genre' | 'artist' | 'venue' | 'bar' | 'theater' | 'interest'
+  value     String
+  embedding Unsupported("vector(1536)")?
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+model FavoriteEntity {
+  id        String   @id @default(cuid())
+  userId    String
+  entityId  String
+  entityType String // 'event' | 'venue' | 'artist'
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+model NotificationSetting {
+    id String @id @default(cuid())
+    userId String @unique
+    user User @relation(fields: [userId], references: [id])
+    emailDigest Boolean @default(true)
+    pushArtistAlert Boolean @default(false)
+    pushVenueAlert Boolean @default(false)
+    quietHoursStart Int @default(22) // 24h format
+    quietHoursEnd Int @default(8)
+}
+
+model Venue {
+  id         String    @id @default(cuid())
+  name       String
+  kind       String? // 'theater' | 'bar' | 'club' | 'museum' | ...
+  address    String?
+  city       String?
+  lat        Float?
+  lng        Float?
+  sourceUrl  String?
+  externalId String?   @unique
+  events     Event[]
+  showtimes  Showtime[]
+}
+
+model Event {
+  id          String   @id @default(cuid())
+  title       String
+  startsAt    DateTime
+  endsAt      DateTime?
+  venueId     String?
+  venue       Venue?   @relation(fields: [venueId], references: [id])
+  city        String
+  priceMin    Int?
+  priceMax    Int?
+  rawCategory String?
+  tags        String[] // LLM tags
+  artists     String[] // names
+  description String?
+  sources     Json // [{name, url}]
+  rating      Float? // optional
+  embedding   Unsupported("vector(1536)")?
+  enrichedAt  DateTime?
+  createdAt   DateTime @default(now())
+  showtimes   Showtime[]
+
+  @@unique([title, startsAt, venueId])
+}
+
+model Showtime {
+  id         String   @id @default(cuid())
+  eventId    String
+  event      Event    @relation(fields: [eventId], references: [id])
+  theaterId  String
+  theater    Venue    @relation(fields: [theaterId], references: [id])
+  movieTitle String
+  rating     Float?
+  ratingSrc  String?
+  startTime  DateTime
+  buyUrl     String?
+  createdAt  DateTime @default(now())
+}
+
+model SourceFetchLog {
+  id        String   @id @default(cuid())
+  source    String // 'eventbrite', 'tmdb', 'yelp', custom url
+  ok        Boolean
+  tookMs    Int
+  message   String?
+  runId     String
+  createdAt DateTime @default(now())
+}

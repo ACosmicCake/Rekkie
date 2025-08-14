@@ -1,0 +1,32 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/node_modules
+
+# build cache
+.next/
+.pnpm-store/
+
+# local env files
+.env.local
+
+# logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# testing
+/coverage
+.vitest-pool/
+
+# misc
+.DS_Store
+*.pem
+
+# Playwright
+/test-results/
+/playwright-report/
+/playwright/.cache/
