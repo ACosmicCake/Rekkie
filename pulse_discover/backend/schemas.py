@@ -2,6 +2,7 @@ from pydantic import BaseModel, EmailStr, Field
 from typing import Optional, List
 import uuid
 import datetime
+from .db.models import InteractionType
 
 # Base schema for user attributes
 class UserBase(BaseModel):
@@ -17,6 +18,41 @@ class UserRead(UserBase):
     user_id: uuid.UUID
     created_at: datetime.datetime
     updated_at: Optional[datetime.datetime] = None
+
+    model_config = {
+        "from_attributes": True,
+    }
+
+# Schemas for User Interests
+class UserInterestBase(BaseModel):
+    category: str
+    value: str
+
+class UserInterestCreate(UserInterestBase):
+    pass
+
+class UserInterestRead(UserInterestBase):
+    interest_id: uuid.UUID
+    user_id: uuid.UUID
+    preference_score: float
+
+    model_config = {
+        "from_attributes": True,
+    }
+
+# Schemas for User Event Interactions
+class UserEventInteractionBase(BaseModel):
+    user_id: uuid.UUID
+    event_id: uuid.UUID
+    interaction_type: InteractionType
+
+class UserEventInteractionCreate(UserEventInteractionBase):
+    pass
+
+class UserEventInteractionRead(UserEventInteractionBase):
+    interaction_id: uuid.UUID
+    interaction_at: datetime.datetime
+    feedback_score: Optional[float] = None
 
     model_config = {
         "from_attributes": True,
