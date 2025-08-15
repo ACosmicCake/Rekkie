@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { render } from '@testing-library/react';
 import withAuth from './withAuth';
 import { AuthProvider } from '@/contexts/AuthContext';
 

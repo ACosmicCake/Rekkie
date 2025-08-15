@@ -1,6 +1,7 @@
 import { getEvent } from '@/lib/api';
 
-export default async function EventDetailPage({ params }: { params: { eventId: string } }) {
+export default async function EventDetailPage({ params: paramsPromise }: { params: Promise<{ eventId: string }> }) {
+  const params = await paramsPromise;
   const event = await getEvent(params.eventId);
 
   if (!event) {

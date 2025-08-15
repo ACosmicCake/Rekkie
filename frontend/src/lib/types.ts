@@ -55,6 +55,11 @@ export interface Event {
   quality_score: number;
 }
 
+export interface WildcardSuggestion {
+  event: Event;
+  rationale: string;
+}
+
 export interface Preference {
   user_id: string;
   liked_genres: string[];

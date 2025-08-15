@@ -1,4 +1,5 @@
-import { Event, Preference, User, UserRegister } from '@/lib/types';
+import { Event, Preference, User, UserRegister, WildcardSuggestion } from '@/lib/types';
+import { getToken } from './auth';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
@@ -17,7 +18,7 @@ export async function getEvents(city?: string, startDate?: string, endDate?: str
   return response.json();
 }
 
-export async function getWildcardSuggestions(userId: string): Promise<any[]> {
+export async function getWildcardSuggestions(userId: string): Promise<WildcardSuggestion[]> {
   const token = getToken();
   const response = await fetch(`${API_URL}/api/wildcard-suggestions?user_id=${userId}`, {
     headers: {
@@ -31,8 +32,6 @@ export async function getWildcardSuggestions(userId: string): Promise<any[]> {
 
   return response.json();
 }
-
-import { getToken } from './auth';
 
 export async function getCurrentUser(): Promise<User> {
   const token = getToken();
