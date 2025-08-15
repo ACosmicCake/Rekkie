@@ -1,0 +1,10 @@
+fastapi
+uvicorn[standard]
+sqlalchemy
+pydantic[email]
+pydantic-settings
+google-generativeai
+passlib[bcrypt]
+python-jose
+alembic
+python-multipart
