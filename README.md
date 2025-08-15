@@ -54,4 +54,28 @@ The application follows a standard monolithic repository pattern with a clear se
 
 ## API Endpoints
 
-(To be defined)
+### Users
+
+- **POST `/users/register`**: Register a new user.
+  - **Request Body**: `{"username": "string", "email": "user@example.com", "password": "password"}`
+- **POST `/users/token`**: Get a JWT token for a registered user.
+  - **Request Body**: `application/x-www-form-urlencoded` with `username` and `password`.
+- **GET `/users/me/interests`**: Get the interests of the current user (requires authentication).
+- **POST `/users/me/interests`**: Add a new interest for the current user (requires authentication).
+  - **Request Body**: `{"category": "string", "value": "string"}`
+- **DELETE `/users/me/interests/{interest_id}`**: Delete an interest for the current user (requires authentication).
+
+### Events
+
+- **GET `/events`**: Get all events.
+- **GET `/events/recommendations`**: Get personalized event recommendations for the current user (requires authentication).
+- **GET `/events/wildcard`**: Get a random selection of events for the discovery feature.
+- **GET `/events/search`**: Search for events with query parameters.
+  - **Query Parameters**: `keyword`, `start_date`, `end_date`, `location`, `event_type`.
+- **POST `/events/ingest`**: Trigger the ingestion of events from the LLM.
+  - **Request Body**: `{"city": "string", "user_preferences": ["string"], "max_events": int}`
+
+### Interactions
+
+- **POST `/interactions`**: Create a new user-event interaction (requires authentication).
+  - **Request Body**: `{"event_id": "uuid", "interaction_type": "saved" | "dismissed" | "attended"}`

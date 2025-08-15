@@ -2,6 +2,10 @@ import sys
 import os
 import pytest
 from fastapi.testclient import TestClient
+from dotenv import load_dotenv
+
+# Load test environment variables
+load_dotenv(dotenv_path="pulse_discover/.env.test")
 
 # Add the project root to the Python path
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))

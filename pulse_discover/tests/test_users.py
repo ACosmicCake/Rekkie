@@ -35,28 +35,36 @@ def test_login_success(client: TestClient, test_db):
         json={"username": "loginuser", "email": "login@example.com", "password": "password123"},
     )
     response = client.post(
-        "/users/login",
+        "/users/token",
         data={"username": "loginuser", "password": "password123"},
     )
     assert response.status_code == 200
-    assert response.json() == {"message": "Login successful"}
+    data = response.json()
+    assert "access_token" in data
+    assert data["token_type"] == "bearer"
+
 
 def test_login_wrong_password(client: TestClient, test_db):
     # First, create a user
     client.post(
         "/users/register",
-        json={"username": "wrongpassuser", "email": "wrongpass@example.com", "password": "password123"},
+        json={
+            "username": "wrongpassuser",
+            "email": "wrongpass@example.com",
+            "password": "password123",
+        },
     )
     response = client.post(
-        "/users/login",
+        "/users/token",
         data={"username": "wrongpassuser", "password": "wrongpassword"},
     )
     assert response.status_code == 401
     assert response.json()["detail"] == "Incorrect username or password"
 
+
 def test_login_nonexistent_user(client: TestClient, test_db):
     response = client.post(
-        "/users/login",
+        "/users/token",
         data={"username": "nosuchuser", "password": "password123"},
     )
     assert response.status_code == 401

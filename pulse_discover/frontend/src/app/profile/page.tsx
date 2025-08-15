@@ -3,9 +3,6 @@
 import { useState, useEffect, FormEvent } from 'react';
 import { UserInterest } from '@/types'; // This type will need to be created
 
-// Dummy user ID - replace with actual logged-in user logic
-const DUMMY_USER_ID = "3fa85f64-5717-4562-b3fc-2c963f66afa6";
-
 export default function ProfilePage() {
   const [interests, setInterests] = useState<UserInterest[]>([]);
   const [loading, setLoading] = useState(true);
@@ -13,10 +10,20 @@ export default function ProfilePage() {
   const [newInterestCategory, setNewInterestCategory] = useState('');
   const [newInterestValue, setNewInterestValue] = useState('');
 
+  const getAuthHeaders = () => {
+    const token = localStorage.getItem('access_token');
+    return {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    };
+  };
+
   const fetchInterests = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`http://localhost:8000/users/${DUMMY_USER_ID}/interests`);
+      const response = await fetch(`http://localhost:8000/users/me/interests`, {
+        headers: getAuthHeaders(),
+      });
       if (!response.ok) {
         throw new Error('Failed to fetch interests');
       }
@@ -30,22 +37,27 @@ export default function ProfilePage() {
   };
 
   useEffect(() => {
-    fetchInterests();
+    const token = localStorage.getItem('access_token');
+    if (token) {
+      fetchInterests();
+    } else {
+      // Handle not logged in state, e.g., redirect to login
+      setLoading(false);
+      setError("You are not logged in.");
+    }
   }, []);
 
   const handleAddInterest = async (e: FormEvent) => {
     e.preventDefault();
     if (!newInterestCategory.trim() || !newInterestValue.trim()) {
-        alert("Please enter both category and value for the interest.");
-        return;
+      alert("Please enter both category and value for the interest.");
+      return;
     }
 
     try {
-      const response = await fetch(`http://localhost:8000/users/${DUMMY_USER_ID}/interests`, {
+      const response = await fetch(`http://localhost:8000/users/me/interests`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: getAuthHeaders(),
         body: JSON.stringify({ category: newInterestCategory, value: newInterestValue }),
       });
 
@@ -62,8 +74,9 @@ export default function ProfilePage() {
 
   const handleDeleteInterest = async (interestId: string) => {
     try {
-      const response = await fetch(`http://localhost:8000/users/interests/${interestId}`, {
+      const response = await fetch(`http://localhost:8000/users/me/interests/${interestId}`, {
         method: 'DELETE',
+        headers: getAuthHeaders(),
       });
       if (!response.ok) {
         throw new Error('Failed to delete interest');

@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from .. import schemas
 from ..db import models
 from ..db.database import get_db
+from ..security import get_current_user
 
 router = APIRouter(
     prefix="/interactions",
@@ -11,18 +12,24 @@ router = APIRouter(
 
 @router.post("/", response_model=schemas.UserEventInteractionRead)
 def create_interaction(
-    interaction: schemas.UserEventInteractionCreate, db: Session = Depends(get_db)
+    interaction: schemas.UserEventInteractionCreate,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_user),
 ):
-    # Check if user and event exist
-    user = db.query(models.User).filter(models.User.user_id == interaction.user_id).first()
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-
-    event = db.query(models.Event).filter(models.Event.event_id == interaction.event_id).first()
+    # Check if event exists
+    event = (
+        db.query(models.Event)
+        .filter(models.Event.event_id == interaction.event_id)
+        .first()
+    )
     if not event:
         raise HTTPException(status_code=404, detail="Event not found")
 
-    db_interaction = models.UserEventInteraction(**interaction.model_dump())
+    # Set user_id from the authenticated user
+    interaction_data = interaction.model_dump()
+    interaction_data["user_id"] = current_user.user_id
+
+    db_interaction = models.UserEventInteraction(**interaction_data)
     db.add(db_interaction)
     db.commit()
     db.refresh(db_interaction)

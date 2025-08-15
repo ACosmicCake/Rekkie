@@ -7,21 +7,21 @@ interface EventCardProps {
   onDismiss?: (eventId: string) => void;
 }
 
-// Dummy user ID - replace with actual logged-in user logic
-const DUMMY_USER_ID = "3fa85f64-5717-4562-b3fc-2c963f66afa6";
-
 export default function EventCard({ event, onDismiss }: EventCardProps) {
   const [isInteracted, setIsInteracted] = useState(false);
 
   const handleInteraction = async (interactionType: 'saved' | 'dismissed') => {
     try {
+      const token = localStorage.getItem('access_token');
+      if (!token) return;
+
       const response = await fetch('http://localhost:8000/interactions/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify({
-          user_id: DUMMY_USER_ID,
           event_id: event.event_id,
           interaction_type: interactionType,
         }),

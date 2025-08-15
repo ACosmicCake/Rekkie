@@ -52,3 +52,12 @@ def ingest_and_store_events(db: Session, city: str, user_preferences: List[str],
         db.commit()
 
     return new_events_count
+
+
+def get_wildcard_events(db: Session, limit: int = 5) -> List[models.Event]:
+    """
+    Returns a random selection of events for the 'discovery' feature.
+    """
+    from sqlalchemy.sql.expression import func
+
+    return db.query(models.Event).order_by(func.random()).limit(limit).all()

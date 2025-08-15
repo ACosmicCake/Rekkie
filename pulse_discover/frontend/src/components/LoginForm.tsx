@@ -14,7 +14,7 @@ export default function LoginForm() {
     setError(null);
 
     try {
-      const response = await fetch('http://localhost:8000/users/login', {
+      const response = await fetch('http://localhost:8000/users/token', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
@@ -31,8 +31,10 @@ export default function LoginForm() {
         throw new Error(data.detail || 'Something went wrong');
       }
 
+      // Store the access token in local storage
+      localStorage.setItem('access_token', data.access_token);
+
       // On successful login, redirect to the dashboard
-      // In a real app, we would store the access token here
       router.push('/dashboard');
 
     } catch (err: any) {
