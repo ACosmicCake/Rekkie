@@ -1,0 +1,17 @@
+fastapi
+uvicorn[standard]
+pydantic[email]
+google-generativeai
+python-decouple
+SQLAlchemy
+psycopg2-binary
+alembic
+SQLAlchemy[mypy]
+pytest
+pytest-mock
+httpx
+pytest-env
+googlesearch-python
+passlib[bcrypt]
+python-jose[cryptography]
+prometheus-client
