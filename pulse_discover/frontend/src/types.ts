@@ -19,3 +19,11 @@ export interface Event {
   created_at: string;
   updated_at?: string;
 }
+
+export interface UserInterest {
+  interest_id: string;
+  user_id: string;
+  category: string;
+  value: string;
+  preference_score: number;
+}

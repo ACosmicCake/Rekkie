@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
+from typing import List
 from .. import schemas
 from ..db import models
 from ..db.database import get_db
@@ -39,3 +40,43 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depend
         )
 
     return {"message": "Login successful"}
+
+
+@router.post("/{user_id}/interests", response_model=schemas.UserInterestRead)
+def create_user_interest(
+    user_id: str,
+    interest: schemas.UserInterestCreate,
+    db: Session = Depends(get_db),
+):
+    user = db.query(models.User).filter(models.User.user_id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    db_interest = models.UserInterest(**interest.model_dump(), user_id=user_id)
+    db.add(db_interest)
+    db.commit()
+    db.refresh(db_interest)
+    return db_interest
+
+
+@router.get("/{user_id}/interests", response_model=List[schemas.UserInterestRead])
+def get_user_interests(user_id: str, db: Session = Depends(get_db)):
+    user = db.query(models.User).filter(models.User.user_id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    return user.interests
+
+
+@router.delete("/interests/{interest_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_user_interest(interest_id: str, db: Session = Depends(get_db)):
+    interest = (
+        db.query(models.UserInterest)
+        .filter(models.UserInterest.interest_id == interest_id)
+        .first()
+    )
+    if not interest:
+        raise HTTPException(status_code=404, detail="Interest not found")
+
+    db.delete(interest)
+    db.commit()
+    return {"message": "Interest deleted successfully"}
