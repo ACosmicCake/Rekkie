@@ -51,6 +51,9 @@ The application follows a standard monolithic repository pattern with a clear se
     pipenv run uvicorn pulse_discover.backend.main:app --reload
 
     pipenv run uvicorn backend.main:app --reload
+
+
+    pipenv run python pulse_discover/scripts/init_db.py
     
     ```
     The application will be available at `http://localhost:8000`.
