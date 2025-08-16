@@ -12,7 +12,7 @@ import auth
 import uuid
 from fastapi.security import OAuth2PasswordRequestForm
 from datetime import timedelta
-from .logging_config import setup_logging
+from logging_config import setup_logging
 from prometheus_client import Counter, generate_latest, REGISTRY
 
 setup_logging()
