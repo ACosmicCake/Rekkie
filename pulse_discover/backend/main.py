@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from .routers import users, events, interactions
+from .routers import users, events, interactions, profiles
 from config.config import settings
 
 
@@ -25,6 +25,7 @@ def get_config():
 app.include_router(users.router)
 app.include_router(events.router)
 app.include_router(interactions.router)
+app.include_router(profiles.router)
 
 @app.get("/")
 def read_root():

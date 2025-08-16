@@ -58,6 +58,25 @@ class UserEventInteractionRead(UserEventInteractionBase):
         "from_attributes": True,
     }
 
+# Schemas for User Profiles
+class UserProfileBase(BaseModel):
+    name: str
+    city: str
+    preferences: List[str]
+
+class UserProfileCreate(UserProfileBase):
+    pass
+
+class UserProfile(UserProfileBase):
+    id: uuid.UUID
+    created_at: datetime.datetime
+    updated_at: Optional[datetime.datetime] = None
+
+    model_config = {
+        "from_attributes": True,
+    }
+
+
 # Schemas for Gemini API Event Data
 class EventDetails(BaseModel):
     name: str = Field(..., description="Name of the event.")

@@ -111,3 +111,14 @@ class UserEventInteraction(Base):
 
     user = relationship("User", back_populates="interactions")
     event = relationship("Event", back_populates="interactions")
+
+
+class UserProfile(Base):
+    __tablename__ = "user_profiles"
+
+    id = Column(UUID_TYPE(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    name = Column(String, unique=True, nullable=False, index=True)
+    city = Column(String, nullable=False)
+    preferences = Column(JSONB_TYPE, nullable=False)  # Storing preferences as a JSON array
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), onupdate=func.now())

@@ -1,92 +1,57 @@
 import { Event } from "@/types";
 
-const API_URL = "http://localhost:8000";
+const API_URL = "http://localhost:8000"; // Ensure this is your backend URL
 
-// User Endpoints
-export const registerUser = async (userData: any) => {
-  console.log("registerUser called with", userData);
-  // const response = await fetch(`${API_URL}/users/register`, {
-  //   method: "POST",
-  //   headers: { "Content-Type": "application/json" },
-  //   body: JSON.stringify(userData),
-  // });
-  // if (!response.ok) throw new Error("Registration failed");
-  // return response.json();
-  return { message: "Registration successful" }; // Placeholder
-};
-
-export const loginUser = async (credentials: any) => {
-  console.log("loginUser called with", credentials);
-  // const response = await fetch(`${API_URL}/token`, {
-  //   method: "POST",
-  //   headers: { "Content-Type": "application/x-www-form-urlencoded" },
-  //   body: new URLSearchParams(credentials),
-  // });
-  // if (!response.ok) throw new Error("Login failed");
-  // return response.json();
-  return { access_token: "fake-token", token_type: "bearer" }; // Placeholder
-};
-
-export const getCurrentUser = async (token: string) => {
-  console.log("getCurrentUser called with token", token);
-  // const response = await fetch(`${API_URL}/users/me`, {
-  //   headers: { Authorization: `Bearer ${token}` },
-  // });
-  // if (!response.ok) throw new Error("Failed to fetch user");
-  // return response.json();
-  return { username: "testuser", email: "test@example.com" }; // Placeholder
-};
-
-// Event Endpoints
-export const getEvents = async (): Promise<Event[]> => {
-  console.log("getEvents called");
-  // const response = await fetch(`${API_URL}/events`);
-  // if (!response.ok) throw new Error("Failed to fetch events");
-  // return response.json();
-  return []; // Placeholder
-};
-
-export const getEventById = async (eventId: string): Promise<Event> => {
-  console.log("getEventById called with", eventId);
-  // const response = await fetch(`${API_URL}/events/${eventId}`);
-  // if (!response.ok) throw new Error("Failed to fetch event");
-  // return response.json();
-  return {} as Event; // Placeholder
-};
-
-// Interaction Endpoints
-export const rsvpToEvent = async (eventId: string, token: string) => {
-  console.log("rsvpToEvent called for event", eventId);
-  // const response = await fetch(`${API_URL}/interactions/event/${eventId}/rsvp`, {
-  //   method: "POST",
-  //   headers: { Authorization: `Bearer ${token}` },
-  // });
-  // if (!response.ok) throw new Error("RSVP failed");
-  // return response.json();
-  return { message: "RSVP successful" }; // Placeholder
-};
-
-// Config Endpoint
-export const getAppConfig = async () => {
-  console.log("getAppConfig called");
-  const response = await fetch(`${API_URL}/api/v1/config`);
+// Profile Endpoints
+export const getUserProfile = async (name: string) => {
+  const response = await fetch(`${API_URL}/profiles/${name}`);
   if (!response.ok) {
-    console.error("Failed to fetch app config");
-    return { anonymous_mode_enabled: false }; // Return a default value
+    if (response.status === 404) {
+      return null; // User not found is a valid case
+    }
+    throw new Error("Failed to fetch user profile");
   }
   return response.json();
 };
 
+export const saveUserProfile = async (profileData: {
+  name: string;
+  city: string;
+  preferences: string[];
+}) => {
+  const response = await fetch(`${API_URL}/profiles/`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(profileData),
+  });
+  if (!response.ok) throw new Error("Failed to save user profile");
+  return response.json();
+};
+
+// Event Endpoints
 export const ingestEvents = async (
   city: string,
-  user_preferences: string[]
+  user_preferences: string[],
+  max_events: number = 10
 ) => {
-  console.log("ingestEvents called with", { city, user_preferences });
   const response = await fetch(`${API_URL}/events/ingest`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ city, user_preferences, max_events: 20 }),
+    body: JSON.stringify({ city, user_preferences, max_events }),
   });
   if (!response.ok) throw new Error("Event ingestion failed");
+  return response.json();
+};
+
+export const searchEvents = async (params: {
+  location?: string;
+  keyword?: string;
+}): Promise<Event[]> => {
+  const query = new URLSearchParams();
+  if (params.location) query.append("location", params.location);
+  if (params.keyword) query.append("keyword", params.keyword);
+
+  const response = await fetch(`${API_URL}/events/search?${query.toString()}`);
+  if (!response.ok) throw new Error("Failed to search events");
   return response.json();
 };
