@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 
 export default function Navbar() {
-  const { isAuthenticated, logout, loading } = useAuth();
+  const { user, logout, loading, isAnonymousMode } = useAuth();
 
   return (
     <nav className="bg-background border-b">
@@ -15,7 +15,7 @@ export default function Navbar() {
             PulseDiscover
           </Link>
           <div className="flex items-center space-x-4">
-            {loading ? null : isAuthenticated ? (
+            {loading ? null : user ? (
               <>
                 <Button variant="ghost" asChild>
                   <Link href="/dashboard">Dashboard</Link>
@@ -25,7 +25,7 @@ export default function Navbar() {
                 </Button>
                 <Button onClick={logout}>Logout</Button>
               </>
-            ) : (
+            ) : !isAnonymousMode ? (
               <>
                 <Button variant="ghost" asChild>
                   <Link href="/login">Login</Link>
@@ -34,7 +34,7 @@ export default function Navbar() {
                   <Link href="/register">Register</Link>
                 </Button>
               </>
-            )}
+            ) : null}
           </div>
         </div>
       </div>

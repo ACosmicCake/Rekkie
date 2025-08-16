@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
-import { getCurrentUser } from "@/lib/api";
+import { getCurrentUser, getAppConfig } from "@/lib/api";
 
 interface User {
   username: string;
@@ -14,6 +14,7 @@ interface AuthContextType {
   login: (token: string) => void;
   logout: () => void;
   loading: boolean;
+  isAnonymousMode: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -22,24 +23,33 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [isAnonymousMode, setIsAnonymousMode] = useState(false);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      getCurrentUser(token)
-        .then((userData) => {
-          setUser(userData);
-          setIsAuthenticated(true);
-        })
-        .catch(() => {
-          localStorage.removeItem("token");
-        })
-        .finally(() => {
+    getAppConfig().then((config) => {
+      setIsAnonymousMode(config.anonymous_mode_enabled);
+      if (config.anonymous_mode_enabled) {
+        setIsAuthenticated(true); // Treat as "logged in" for UI flow
+        setLoading(false);
+      } else {
+        const token = localStorage.getItem("token");
+        if (token) {
+          getCurrentUser(token)
+            .then((userData) => {
+              setUser(userData);
+              setIsAuthenticated(true);
+            })
+            .catch(() => {
+              localStorage.removeItem("token");
+            })
+            .finally(() => {
+              setLoading(false);
+            });
+        } else {
           setLoading(false);
-        });
-    } else {
-      setLoading(false);
-    }
+        }
+      }
+    });
   }, []);
 
   const login = (token: string) => {
@@ -57,7 +67,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, user, login, logout, loading }}>
+    <AuthContext.Provider
+      value={{ isAuthenticated, user, login, logout, loading, isAnonymousMode }}
+    >
       {children}
     </AuthContext.Provider>
   );

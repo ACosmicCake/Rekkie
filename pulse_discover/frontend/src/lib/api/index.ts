@@ -65,3 +65,28 @@ export const rsvpToEvent = async (eventId: string, token: string) => {
   // return response.json();
   return { message: "RSVP successful" }; // Placeholder
 };
+
+// Config Endpoint
+export const getAppConfig = async () => {
+  console.log("getAppConfig called");
+  const response = await fetch(`${API_URL}/api/v1/config`);
+  if (!response.ok) {
+    console.error("Failed to fetch app config");
+    return { anonymous_mode_enabled: false }; // Return a default value
+  }
+  return response.json();
+};
+
+export const ingestEvents = async (
+  city: string,
+  user_preferences: string[]
+) => {
+  console.log("ingestEvents called with", { city, user_preferences });
+  const response = await fetch(`${API_URL}/events/ingest`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ city, user_preferences, max_events: 20 }),
+  });
+  if (!response.ok) throw new Error("Event ingestion failed");
+  return response.json();
+};
