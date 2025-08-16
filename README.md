@@ -49,6 +49,9 @@ The application follows a standard monolithic repository pattern with a clear se
 1.  **Start the backend development server:**
     ```bash
     pipenv run uvicorn pulse_discover.backend.main:app --reload
+
+    pipenv run uvicorn backend.main:app --reload
+    
     ```
     The application will be available at `http://localhost:8000`.
 
