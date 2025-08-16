@@ -72,7 +72,7 @@ class EventDetails(BaseModel):
     image_url: Optional[str] = Field(None, description="URL to a high-quality image of the event or venue.")
     event_type: str = Field(..., description="Category or type of the event (e.g., 'Live Music', 'Art Exhibition', 'Workshop', 'Film Screening', 'Sports Event', 'Meetup').")
     source_urls: List[str] = Field(..., description="List of URLs from where the information was sourced (e.g., official venue website, ticketing platform).")
-    additional_details: Optional[dict] = Field(None, description="A dictionary for category-specific details, e.g., {'genre': 'Jazz', 'artist': 'John Coltrane'} for music.")
+    additional_details: Optional[str] = Field(None, description="A dictionary for category-specific details, e.g., {'genre': 'Jazz', 'artist': 'John Coltrane'} for music.")
 
 class EventList(BaseModel):
     events: List[EventDetails] = Field(..., description="A list of discovered events.")

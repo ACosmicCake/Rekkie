@@ -7,7 +7,7 @@ class Settings(BaseSettings):
     REDIS_BROKER_URL: str
     ALGORITHM: str
     ACCESS_TOKEN_EXPIRE_MINUTES: int
-    ANONYMOUS_MODE_ENABLED: bool = False
+    ANONYMOUS_MODE_ENABLED: bool = True
 
     model_config = SettingsConfigDict(env_file=".env")
 

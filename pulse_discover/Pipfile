@@ -16,10 +16,10 @@ passlib = {extras = ["bcrypt"], version = "*"}
 pydantic-settings = "*"
 python-multipart = "*"
 pydantic = {extras = ["email"], version = "*"}
-google-generativeai = "*"
 python-jose = "==3.3.0"
+google = "*"
+google-generativeai = "*"
 
 [dev-packages]
 pytest = "*"
 httpx = "*"
-
