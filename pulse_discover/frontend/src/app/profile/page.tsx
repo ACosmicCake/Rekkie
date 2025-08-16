@@ -1,144 +1,67 @@
 "use client";
 
-import { useState, useEffect, FormEvent } from 'react';
-import { UserInterest } from '@/types'; // This type will need to be created
+import { useState } from "react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { EventCard } from "@/components/EventCard";
+import { Event } from "@/types";
+
+// Placeholder data
+const user = {
+  username: "testuser",
+  email: "test@example.com",
+  avatarUrl: "https://github.com/shadcn.png",
+};
+
+const rsvpdEvents: Event[] = [
+  {
+    event_id: "1",
+    name: "Tech Conference 2025",
+    description: "The biggest tech conference in the world.",
+    start_time: "2025-10-20T09:00:00Z",
+    end_time: "2025-10-22T17:00:00Z",
+    location_name: "San Francisco, CA",
+    image_url: "https://via.placeholder.com/400x200",
+    ticket_link: "#",
+    category: "Tech",
+    address: "123 Main St",
+    city: "San Francisco",
+    event_type: "Conference",
+    created_at: "2024-01-01T00:00:00Z",
+  },
+];
 
 export default function ProfilePage() {
-  const [interests, setInterests] = useState<UserInterest[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [newInterestCategory, setNewInterestCategory] = useState('');
-  const [newInterestValue, setNewInterestValue] = useState('');
-
-  const getAuthHeaders = () => {
-    const token = localStorage.getItem('access_token');
-    return {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`,
-    };
-  };
-
-  const fetchInterests = async () => {
-    try {
-      setLoading(true);
-      const response = await fetch(`http://localhost:8000/users/me/interests`, {
-        headers: getAuthHeaders(),
-      });
-      if (!response.ok) {
-        throw new Error('Failed to fetch interests');
-      }
-      const data = await response.json();
-      setInterests(data);
-    } catch (err: any) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    const token = localStorage.getItem('access_token');
-    if (token) {
-      fetchInterests();
-    } else {
-      // Handle not logged in state, e.g., redirect to login
-      setLoading(false);
-      setError("You are not logged in.");
-    }
-  }, []);
-
-  const handleAddInterest = async (e: FormEvent) => {
-    e.preventDefault();
-    if (!newInterestCategory.trim() || !newInterestValue.trim()) {
-      alert("Please enter both category and value for the interest.");
-      return;
-    }
-
-    try {
-      const response = await fetch(`http://localhost:8000/users/me/interests`, {
-        method: 'POST',
-        headers: getAuthHeaders(),
-        body: JSON.stringify({ category: newInterestCategory, value: newInterestValue }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to add interest');
-      }
-      setNewInterestCategory('');
-      setNewInterestValue('');
-      fetchInterests(); // Refresh interests list
-    } catch (err: any) {
-      setError(err.message);
-    }
-  };
-
-  const handleDeleteInterest = async (interestId: string) => {
-    try {
-      const response = await fetch(`http://localhost:8000/users/me/interests/${interestId}`, {
-        method: 'DELETE',
-        headers: getAuthHeaders(),
-      });
-      if (!response.ok) {
-        throw new Error('Failed to delete interest');
-      }
-      fetchInterests(); // Refresh interests list
-    } catch (err: any) {
-      setError(err.message);
-    }
-  };
-
-
-  if (loading) {
-    return <p className="text-center mt-8">Loading profile...</p>;
-  }
-
-  if (error) {
-    return <p className="text-center mt-8 text-red-500">Error: {error}</p>;
-  }
-
   return (
-    <main className="p-8 max-w-4xl mx-auto">
-      <h1 className="text-3xl font-bold mb-6">Your Profile</h1>
-
-      <div className="bg-white shadow-md rounded-lg p-6 mb-8">
-        <h2 className="text-2xl font-semibold mb-4">Manage Your Interests</h2>
-        <form onSubmit={handleAddInterest} className="flex gap-4 mb-6">
-          <input
-            type="text"
-            value={newInterestCategory}
-            onChange={(e) => setNewInterestCategory(e.target.value)}
-            placeholder="Interest Category (e.g., music)"
-            className="input input-bordered w-full"
-          />
-          <input
-            type="text"
-            value={newInterestValue}
-            onChange={(e) => setNewInterestValue(e.target.value)}
-            placeholder="Interest Value (e.g., Jazz)"
-            className="input input-bordered w-full"
-          />
-          <button type="submit" className="btn btn-primary">Add</button>
-        </form>
-
-        <div>
-          {interests.length > 0 ? (
-            <ul className="space-y-2">
-              {interests.map((interest) => (
-                <li key={interest.interest_id} className="flex justify-between items-center bg-gray-100 p-3 rounded-md">
-                  <span>
-                    <span className="font-bold">{interest.category}:</span> {interest.value}
-                  </span>
-                  <button onClick={() => handleDeleteInterest(interest.interest_id)} className="btn btn-sm btn-error">
-                    Delete
-                  </button>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p>You have no saved interests yet.</p>
-          )}
+    <div className="container mx-auto px-4 py-8">
+      <div className="flex flex-col md:flex-row items-center md:items-start gap-8 mb-12">
+        <Avatar className="h-24 w-24">
+          <AvatarImage src={user.avatarUrl} alt={user.username} />
+          <AvatarFallback>{user.username.charAt(0).toUpperCase()}</AvatarFallback>
+        </Avatar>
+        <div className="text-center md:text-left">
+          <h1 className="text-3xl font-bold">{user.username}</h1>
+          <p className="text-muted-foreground">{user.email}</p>
         </div>
       </div>
-    </main>
+
+      <div className="mb-12">
+        <h2 className="text-2xl font-bold mb-6">My Events</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          {rsvpdEvents.map((event) => (
+            <EventCard key={event.event_id} event={event} />
+          ))}
+        </div>
+      </div>
+
+      <div>
+        <h2 className="text-2xl font-bold mb-6">Settings</h2>
+        <div className="space-y-4 max-w-md">
+          <Button variant="outline">Change Password</Button>
+          <Button variant="outline">Update Profile</Button>
+          <Button variant="destructive">Delete Account</Button>
+        </div>
+      </div>
+    </div>
   );
 }

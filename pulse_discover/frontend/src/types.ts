@@ -14,6 +14,7 @@ export interface Event {
   ticket_link?: string;
   image_url?: string;
   event_type: string;
+  category?: string;
   source_urls?: string[];
   raw_json_data?: any;
   created_at: string;
