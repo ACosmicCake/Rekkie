@@ -1,21 +1,14 @@
 from fastapi import FastAPI, BackgroundTasks
 from datetime import date
-
-# It's better to configure the python path or have a proper package structure
-# but for now, this will work.
-import sys
-import os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-
-from backend.worker.ingest import run_ingestion
-from backend.database import get_db
-from backend import tables, models
+from worker.ingest import run_ingestion
+from database import get_db
 from sqlalchemy.orm import Session
-from backend.recommendations.content_based import get_recommendations as get_content_based_recommendations
-from backend.recommendations.wildcard import get_wildcard_suggestions
+from recommendations.content_based import get_recommendations as get_content_based_recommendations
+from recommendations.wildcard import get_wildcard_suggestions
 from fastapi import Depends, HTTPException, status, Response
 from typing import List, Optional
-from backend import auth
+import tables, models
+import auth
 import uuid
 from fastapi.security import OAuth2PasswordRequestForm
 from datetime import timedelta

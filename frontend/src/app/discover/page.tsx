@@ -1,6 +1,8 @@
 import { getWildcardSuggestions } from '@/lib/api';
 import EventCard from '@/components/EventCard';
 
+export const dynamic = 'force-dynamic';
+
 export default async function DiscoverPage() {
   const suggestions = await getWildcardSuggestions("user-123"); // Hardcoded user_id
 

@@ -5,7 +5,7 @@ import pydantic
 import json
 from googlesearch import search
 
-from backend.models import Event
+from models import Event
 
 # Configure the Gemini API client
 GEMINI_API_KEY = config("GEMINI_API_KEY")

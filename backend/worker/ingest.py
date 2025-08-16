@@ -2,17 +2,10 @@ import json
 import argparse
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
-
-# It's better to configure the python path or have a proper package structure
-# but for now, this will work.
-import sys
-import os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
-
-from backend.services.gemini import find_events
-from backend.database import SessionLocal, engine
-from backend.tables import Event as EventTable, Base
-from backend.models import Event as EventPydantic
+from services.gemini import find_events
+from database import SessionLocal, engine
+from tables import Event as EventTable, Base
+from models import Event as EventPydantic
 
 
 def run_ingestion(city: str, start: str, end: str):

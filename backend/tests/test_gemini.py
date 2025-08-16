@@ -1,7 +1,7 @@
 import pytest
 import json
-from backend.services.gemini import find_events, google_search
-from backend.models import Event
+from services.gemini import find_events, google_search
+from models import Event
 
 def test_google_search(mocker):
     """

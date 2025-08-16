@@ -1,6 +1,8 @@
 import { getEvents, getRecommendations } from '@/lib/api';
 import EventCard from '@/components/EventCard';
 
+export const dynamic = 'force-dynamic';
+
 export default async function HomePage() {
   const events = await getEvents();
   const recommendedEvents = await getRecommendations("user-123"); // Hardcoded user_id

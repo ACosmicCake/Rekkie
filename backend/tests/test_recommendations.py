@@ -1,7 +1,7 @@
 import pytest
-from backend.recommendations.content_based import get_recommendations
-from backend.recommendations.wildcard import get_wildcard_suggestions
-from backend.tables import User as UserTable, Preference as PreferenceTable, Event as EventTable, Interaction as InteractionTable
+from recommendations.content_based import get_recommendations
+from recommendations.wildcard import get_wildcard_suggestions
+from tables import User as UserTable, Preference as PreferenceTable, Event as EventTable, Interaction as InteractionTable
 from datetime import datetime
 import uuid
 

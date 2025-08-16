@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from backend import tables, models
+import tables, models
 from typing import List
 
 RELATED_CATEGORIES = {

@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from backend import tables, models
+import tables, models
 from typing import List
 
 def get_recommendations(user_id: str, db: Session) -> List[models.Event]:

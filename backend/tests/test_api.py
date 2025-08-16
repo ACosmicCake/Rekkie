@@ -2,9 +2,9 @@ import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from backend.main import app
-from backend.database import Base, get_db
-from backend.tables import Event as EventTable, Venue as VenueTable, User as UserTable, Preference as PreferenceTable, Interaction as InteractionTable
+from main import app
+from database import Base, get_db
+from tables import Event as EventTable, Venue as VenueTable, User as UserTable, Preference as PreferenceTable, Interaction as InteractionTable
 from datetime import datetime
 import uuid
 

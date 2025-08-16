@@ -13,9 +13,9 @@ from jose import JWTError, jwt
 from decouple import config
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
-from backend import models, tables
+import models, tables
 from sqlalchemy.orm import Session
-from backend.database import get_db
+from database import get_db
 
 SECRET_KEY = config("SECRET_KEY")
 ALGORITHM = config("ALGORITHM")

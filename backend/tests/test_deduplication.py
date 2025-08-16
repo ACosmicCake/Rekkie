@@ -1,4 +1,4 @@
-from backend.utils.deduplication import generate_canonical_fingerprint
+from utils.deduplication import generate_canonical_fingerprint
 
 def test_generate_canonical_fingerprint():
     """
