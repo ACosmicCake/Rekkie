@@ -1,7 +1,7 @@
 from fastapi import FastAPI, BackgroundTasks
 from datetime import date
 from worker.ingest import run_ingestion
-from database import get_db
+from database import get_db, engine
 from sqlalchemy.orm import Session
 from recommendations.content_based import get_recommendations as get_content_based_recommendations
 from recommendations.wildcard import get_wildcard_suggestions
@@ -17,6 +17,10 @@ from prometheus_client import Counter, generate_latest, REGISTRY
 
 setup_logging()
 app = FastAPI()
+
+# Create tables if they don't exist.
+# In a real application, this would be handled by Alembic migrations.
+tables.Base.metadata.create_all(bind=engine)
 
 
 @app.get("/")
