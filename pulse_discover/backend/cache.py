@@ -1,6 +1,17 @@
 import redis
 import json
 from typing import Optional, Any
+from uuid import UUID
+import datetime
+
+class CustomJSONEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, UUID):
+            # if the obj is uuid, we simply return the value as string
+            return str(obj)
+        if isinstance(obj, (datetime.date, datetime.datetime)):
+            return obj.isoformat()
+        return super().default(obj)
 
 # Connect to Redis
 # In a real application, the host and port should be configurable.
@@ -19,7 +30,7 @@ def set_to_cache(key: str, value: Any, ttl: int = 3600):
     """
     Sets data to the cache with a time-to-live (ttl) in seconds.
     """
-    redis_client.setex(key, ttl, json.dumps(value))
+    redis_client.setex(key, ttl, json.dumps(value, cls=CustomJSONEncoder))
 
 def clear_cache(key: str):
     """

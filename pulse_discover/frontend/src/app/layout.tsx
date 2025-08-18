@@ -17,10 +17,6 @@ export const metadata: Metadata = {
   description: "Discover Your Next Great Event",
 };
 
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
-import { AuthProvider } from "@/contexts/AuthContext";
-
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -31,13 +27,9 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <AuthProvider>
-          <div className="flex flex-col min-h-screen">
-            <Navbar />
-            <main className="flex-grow">{children}</main>
-            <Footer />
-          </div>
-        </AuthProvider>
+        <div className="flex flex-col min-h-screen">
+          <main className="flex-grow">{children}</main>
+        </div>
       </body>
     </html>
   );

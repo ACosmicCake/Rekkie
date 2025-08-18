@@ -16,7 +16,7 @@ export interface Event {
   event_type: string;
   category?: string;
   source_urls?: string[];
-  raw_json_data?: any;
+  raw_json_data?: object;
   created_at: string;
   updated_at?: string;
 }

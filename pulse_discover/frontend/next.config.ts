@@ -2,12 +2,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   images: {
-    remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "via.placeholder.com",
-      },
-    ],
+    // No remote patterns needed when using unoptimized={true}
   },
 };
 
